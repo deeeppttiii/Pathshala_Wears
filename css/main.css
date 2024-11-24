@@ -1,0 +1,6 @@
+/* Main CSS file - Importing all modular CSS files */
+@import url('base.css');
+@import url('components.css');
+@import url('animations.css');
+@import url('dark-mode.css');
+@import url('responsive.css');
