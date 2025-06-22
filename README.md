@@ -1,1 +1,2 @@
-"# Pathshala_Wears" 
+Updated homepage UI and project structure
+
