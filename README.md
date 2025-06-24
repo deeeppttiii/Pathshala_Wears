@@ -6,3 +6,5 @@ Added responsive navigation improvements
 
 Enhanced product cards
 
+Improved homepage UI
+
