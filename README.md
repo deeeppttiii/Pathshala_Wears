@@ -8,3 +8,5 @@ Enhanced product cards
 
 Improved homepage UI
 
+Added responsive navbar
+
