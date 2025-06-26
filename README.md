@@ -4,3 +4,5 @@ Improved homepage UI and project structure
 
 Added responsive navigation improvements
 
+Enhanced product cards
+
