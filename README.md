@@ -10,3 +10,5 @@ Improved homepage UI
 
 Added responsive navbar
 
+Implemented product filtering
+
