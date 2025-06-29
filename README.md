@@ -12,3 +12,5 @@ Added responsive navbar
 
 Implemented product filtering
 
+Added cart functionality
+
