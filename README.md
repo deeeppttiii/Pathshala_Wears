@@ -14,3 +14,5 @@ Implemented product filtering
 
 Added cart functionality
 
+Improved checkout page
+
