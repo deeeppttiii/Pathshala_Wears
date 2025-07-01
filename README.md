@@ -16,3 +16,5 @@ Added cart functionality
 
 Improved checkout page
 
+Integrated Khalti payment
+
