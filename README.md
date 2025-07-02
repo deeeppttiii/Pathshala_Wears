@@ -18,3 +18,5 @@ Improved checkout page
 
 Integrated Khalti payment
 
+Integrated eSewa payment
+
