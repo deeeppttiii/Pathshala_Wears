@@ -20,3 +20,5 @@ Integrated Khalti payment
 
 Integrated eSewa payment
 
+Enhanced authentication pages
+
