@@ -22,3 +22,5 @@ Integrated eSewa payment
 
 Enhanced authentication pages
 
+Improved mobile responsiveness
+
