@@ -24,3 +24,5 @@ Enhanced authentication pages
 
 Improved mobile responsiveness
 
+Updated product detail page
+
