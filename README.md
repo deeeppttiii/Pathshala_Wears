@@ -26,3 +26,5 @@ Improved mobile responsiveness
 
 Updated product detail page
 
+Added order management system
+
