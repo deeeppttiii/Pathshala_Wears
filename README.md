@@ -28,3 +28,5 @@ Updated product detail page
 
 Added order management system
 
+Improved dashboard layout
+
