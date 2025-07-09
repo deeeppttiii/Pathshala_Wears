@@ -30,3 +30,5 @@ Added order management system
 
 Improved dashboard layout
 
+Enhanced footer section
+
