@@ -32,3 +32,5 @@ Improved dashboard layout
 
 Enhanced footer section
 
+Added smooth animations
+
