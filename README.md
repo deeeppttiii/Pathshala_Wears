@@ -36,3 +36,5 @@ Added smooth animations
 
 Optimized frontend styling
 
+Improved CSS structure
+
