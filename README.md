@@ -38,3 +38,5 @@ Optimized frontend styling
 
 Improved CSS structure
 
+Enhanced user profile page
+
