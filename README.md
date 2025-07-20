@@ -48,3 +48,5 @@ git commit -m "Improved payment verification and redirects" --date="2025-07-16 1
 
 Updated homepage sections
 
+Added review system
+
