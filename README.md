@@ -50,3 +50,5 @@ Updated homepage sections
 
 Added review system
 
+Improved form validation
+
