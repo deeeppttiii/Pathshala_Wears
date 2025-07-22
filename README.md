@@ -52,3 +52,5 @@ Added review system
 
 Improved form validation
 
+Enhanced responsive layout
+
