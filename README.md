@@ -58,3 +58,5 @@ Optimized UI spacing
 
 Improved checkout flow
 
+Enhanced navigation experience
+
