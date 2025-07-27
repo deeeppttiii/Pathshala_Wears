@@ -60,3 +60,5 @@ Improved checkout flow
 
 Enhanced navigation experience
 
+Updated product showcase
+
