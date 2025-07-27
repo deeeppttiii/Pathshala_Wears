@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Checkout - Pathshala Wears{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 py-10">
+  <h2 class="text-3xl font-bold mb-6 text-[#A67C52]">Checkout</h2>
+
+  <div class="bg-white rounded-xl shadow-lg p-6 space-y-8">
+    
+    <!-- Order Summary -->
+    <div>
+      <h3 class="text-xl font-semibold mb-3">Order Summary</h3>
+      <ul class="divide-y divide-gray-200">
+        {% for item in cart.items.all %}
+        <li class="py-2 flex justify-between text-sm">
+          <span>{{ item.product.name }} × {{ item.quantity }}</span>
+          <span>${{ item.get_cost }}</span>
+        </li>
+        {% endfor %}
+        <li class="py-2 flex justify-between font-bold text-[#A67C52]">
+          <span>Total</span>
+          <span>${{ cart.get_total }}</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Form Starts Here -->
+    <form method="post" action="{% url 'cart:checkout' %}">
+      {% csrf_token %}
+
+      <!-- Payment Methods -->
+      <div>
+        <h3 class="text-xl font-semibold mb-3">Payment Method</h3>
+        <div class="space-y-4">
+
+          <!-- Cash on Delivery -->
+          <label class="flex items-center gap-4 p-4 border rounded cursor-pointer hover:bg-gray-50">
+            <input type="radio" name="payment_method" value="cod" checked class="form-radio text-[#A67C52]">
+            <span>Cash on Delivery</span>
+          </label>
+
+          <!-- eSewa -->
+          <label class="flex items-center gap-4 p-4 border rounded cursor-pointer hover:bg-gray-50">
+            <input type="radio" name="payment_method" value="esewa" class="form-radio text-green-600">
+            <img src="{% static 'images/esewa.png' %}" alt="eSewa" class="h-6">
+            <span>eSewa</span>
+          </label>
+
+          <!-- Khalti -->
+          <label class="flex items-center gap-4 p-4 border rounded cursor-pointer hover:bg-gray-50">
+            <input type="radio" name="payment_method" value="khalti" class="form-radio text-purple-600">
+            <img src="{% static 'images/khalti.png' %}" alt="Khalti" class="h-6">
+            <span>Khalti</span>
+          </label>
+
+        </div>
+      </div>
+
+      <!-- Submit Button -->
+      <button type="submit"
+        class="w-full mt-4 py-3 text-white font-semibold rounded-lg bg-gradient-to-r from-[#A67C52] to-[#8B6742] hover:from-[#8B6742] hover:to-[#5C442E] shadow transition hover:scale-[1.02]">
+        Confirm & Place Order
+      </button>
+    </form>
+
+  </div>
+</div>
+{% endblock %}

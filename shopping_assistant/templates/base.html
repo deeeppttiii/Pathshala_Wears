@@ -1,0 +1,171 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}Pathshala Wears{% endblock %}</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+    }
+  </script>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+  </style>
+
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+
+  <!-- Custom Styles -->
+  <link href="{% static 'css/style.css' %}" rel="stylesheet" />
+
+  {% block extra_head %}{% endblock %}
+</head>
+
+<body class="bg-gray-50 dark:bg-gray-900 dark:text-white text-gray-800 transition-colors duration-300">
+
+<!-- Navigation -->
+    <nav class="uppercase flex justify-between bg-white/90 backdrop-blur-md border-b-2 border-green-200 py-4 px-6 lg:px-12 lg:py:6 shadow-sm sticky top-0 z-40">
+      <a href="/" class="flex items-center group">
+        <div class="w-16 lg:w-18 h-16 lg:h-18 rounded-full border-2 border-green-600 flex items-center justify-center group-hover:scale-105 transition-transform overflow-hidden">
+          <img src="/static/images/logo.png" alt="Digital Wears Logo" class="w-full h-full object-cover rounded-full" />
+        </div>
+        <div class="ml-2 lg:ml-4 text-xl lg:text-2xl font-semibold text-green-800 tracking-widest">Pathshala Wears</div>
+      </a>
+
+      <!-- Desktop Navigation -->
+      <div class="my-auto hidden md:block">
+        <ul class="flex gap-6 lg:gap-8 text-sm font-bold items-center">
+          <li class="relative group pb-1">
+            <a href="/product" class="text-gray-700 hover:text-green-600 transition-colors p-1">Product</a>
+              <div class="absolute bottom-0 left-1/2 w-0 h-0.5 bg-green-600 transition-all duration-300 group-hover:w-full group-hover:left-0"></div>
+            </a>
+          </li>
+        {% if user.is_authenticated %}
+          <a href="{% url 'cart:cart' %}" class="hover:text-green-600 dark:hover:text-green-400 transition">
+            <i class="fas fa-shopping-cart mr-1"></i>Cart
+          </a>
+          <form method="post" action="{% url 'auth:logout' %}">
+            {% csrf_token %}
+            <button type="submit" class="hover:text-red-600 dark:hover:text-red-400 transition">
+              <i class="fas fa-sign-out-alt mr-1"></i>Logout
+            </button>
+          </form>
+        {% else %}
+          <a href="{% url 'auth:login' %}" class="hover:text-green-600 dark:hover:text-green-400 transition">
+            <i class="fas fa-sign-in-alt mr-1"></i>Login
+          </a>
+          <a href="{% url 'auth:register' %}" class="bg-green-700 hover:bg-green-800 dark:bg-green-400 dark:hover:bg-green-500 text-white px-4 py-2 rounded-md transition">
+            <i class="fas fa-user-plus mr-1"></i>Register
+          </a>
+        {% endif %}
+
+        <!-- Dark Mode Toggle -->
+        <button id="theme-toggle" class="ml-4 text-xl hover:text-green-600 dark:hover:text-green-300 transition">
+          <i id="theme-icon" class="fas fa-moon"></i>
+        </button>
+      </div>
+
+      <!-- Mobile Menu Toggle -->
+      <button id="mobile-menu-button" class="md:hidden text-gray-700 dark:text-white hover:text-green-600 focus:outline-none">
+        <i class="fas fa-bars text-3xl"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile Menu -->
+  <div id="mobile-menu" class="hidden md:hidden px-4 pb-4">
+    <a href="{% url 'products:product_list' %}" class="block py-2 hover:text-green-600 dark:hover:text-green-400">Products</a>
+    {% if user.is_authenticated %}
+      <a href="{% url 'cart:cart' %}" class="block py-2 hover:text-green-600 dark:hover:text-green-400">
+        <i class="fas fa-shopping-cart mr-1"></i>Cart
+      </a>
+      <form method="post" action="{% url 'auth:logout' %}">
+        {% csrf_token %}
+        <button type="submit" class="w-full text-left py-2 hover:text-red-600 dark:hover:text-red-400">
+          <i class="fas fa-sign-out-alt mr-1"></i>Logout
+        </button>
+      </form>
+    {% else %}
+      <a href="{% url 'auth:login' %}" class="block py-2 hover:text-green-600 dark:hover:text-green-400">
+        <i class="fas fa-sign-in-alt mr-1"></i>Login
+      </a>
+      <a href="{% url 'auth:register' %}" class="block py-2 bg-green-700 hover:bg-green-800 dark:bg-green-400 dark:hover:bg-green-500 text-white rounded-md text-center">
+        <i class="fas fa-user-plus mr-1"></i>Register
+      </a>
+    {% endif %}
+  </div>
+</nav>
+
+<!-- Flash Messages -->
+<div class="max-w-5xl mx-auto mt-4 px-4">
+  {% if messages %}
+    {% for message in messages %}
+      <div class="p-4 mb-4 rounded-md shadow-sm
+        {% if message.tags == 'success' %}bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-300
+        {% elif message.tags == 'error' %}bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-300
+        {% elif message.tags == 'info' %}bg-green-100/30 dark:bg-green-400/20 text-green-700 dark:text-green-300
+        {% elif message.tags == 'warning' %}bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-300
+        {% endif %}">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+</div>
+
+<!-- Main Content -->
+<main class="max-w-7xl mx-auto px-4">
+  {% block content %}{% endblock %}
+</main>
+
+<!-- Footer -->
+<footer class="bg-gray-100 dark:bg-gray-800 border-t py-6 mt-12">
+  <div class="max-w-7xl mx-auto text-center text-sm text-gray-500 dark:text-gray-300">
+    &copy; 2025 <strong>Pathshala Wears</strong>. All rights reserved.
+  </div>
+</footer>
+
+{% block extra_js %}{% endblock %}
+
+<!-- Scripts -->
+<script>
+  // Mobile menu toggle
+  document.getElementById('mobile-menu-button').addEventListener('click', function () {
+    document.getElementById('mobile-menu').classList.toggle('hidden');
+  });
+
+  // Theme toggle
+  const themeToggle = document.getElementById('theme-toggle');
+  const themeIcon = document.getElementById('theme-icon');
+  const rootElement = document.documentElement;
+
+  // Initialize theme on page load
+  if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+    rootElement.classList.add('dark');
+    themeIcon.classList.replace('fa-moon', 'fa-sun');
+  } else {
+    rootElement.classList.remove('dark');
+    themeIcon.classList.replace('fa-sun', 'fa-moon');
+  }
+
+  // Toggle theme
+  themeToggle.addEventListener('click', () => {
+    rootElement.classList.toggle('dark');
+    const isDark = rootElement.classList.contains('dark');
+    localStorage.theme = isDark ? 'dark' : 'light';
+    themeIcon.classList.toggle('fa-sun');
+    themeIcon.classList.toggle('fa-moon');
+  });
+</script>
+
+</body>
+</html>
