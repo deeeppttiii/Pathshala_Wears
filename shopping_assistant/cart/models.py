@@ -32,7 +32,7 @@ class CartItem(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
         
     def get_cost(self):
-        return self.product.price * self.quantity
+        return self.product.current_price * self.quantity
 
     def __str__(self):
         return f"{self.quantity} x {self.product.name}"

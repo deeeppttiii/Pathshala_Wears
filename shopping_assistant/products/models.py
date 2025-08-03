@@ -55,6 +55,10 @@ class Product(models.Model):
             return round(discount)
         return 0
 
+    @property
+    def current_price(self):
+        return self.discount_price or self.price
+
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.name)
