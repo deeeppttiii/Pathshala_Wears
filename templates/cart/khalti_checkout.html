@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block title %}Khalti Payment{% endblock %}
+{% block content %}
+<div class="max-w-xl mx-auto py-10">
+    <h2 class="text-2xl font-bold text-purple-600 mb-4">Pay with Khalti</h2>
+    <p class="mb-4">Order ID: {{ order.id }}</p>
+    <p>Total Amount: ${{ order.total }}</p>
+    <!-- Replace with real Khalti integration form later -->
+    <p class="text-sm text-gray-500 mt-6">Khalti payment integration coming soon.</p>
+</div>
+{% endblock %}

@@ -1,0 +1,241 @@
+{% extends 'base.html' %}
+
+{% block title %}Login - Pathshala Wears{% endblock %}
+
+{% block content %}
+<div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div class="w-full max-w-lg sm:max-w-xl space-y-8 bg-white rounded-xl shadow-2xl p-20">
+        <div class="text-center">
+            <!-- Animated Emoji Face -->
+            <div class="emoji-face mb-6" id="emojiface">
+                <div class="face">
+                    <div class="eyes">
+                        <div class="eye left-eye" id="left-eye">
+                            <div class="eyeball"></div>
+                        </div>
+                        <div class="eye right-eye" id="right-eye">
+                            <div class="eyeball"></div>
+                        </div>
+                    </div>
+                    <div class="mouth"></div>
+                </div>
+            </div>
+            <h2 class="text-3xl font-extrabold text-gray-900">Welcome Back</h2>
+            <p class="mt-2 text-sm text-gray-600">Sign in to your account</p>
+        </div>
+
+        <form method="post" novalidate class="mt-8 space-y-6">
+            {% csrf_token %}
+            {% if form.errors %}
+                <div class="bg-red-50 border-l-2 border-red-500 p-2 rounded">
+                    <div class="flex items-center">
+                        <i class="fas fa-exclamation-circle text-red-500 mr-2"></i>
+                        <p class="text-sm text-red-700">Invalid username or password. Please try again.</p>
+                    </div>
+                </div>
+            {% endif %}
+
+            <div class="space-y-4">
+                <div>
+                    <label for="id_username" class="flex items-center text-sm font-medium text-gray-700 mb-1">
+                        <i class="fas fa-user text-gray-400 mr-2"></i>Username
+                    </label>
+                    <input type="text" name="username" id="id_username"
+                           class="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded focus:outline-none focus:ring-2 focus:ring-[#A67C52] focus:border-[#A67C52] sm:text-sm"
+                           required placeholder="Enter your username">
+                </div>
+
+                <div>
+                    <label for="id_password" class="flex items-center text-sm font-medium text-gray-700 mb-1">
+                        <i class="fas fa-lock text-gray-400 mr-2"></i>Password
+                    </label>
+                    <div class="relative">
+                        <input type="password" name="password" id="id_password"
+                               class="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded focus:outline-none focus:ring-2 focus:ring-[#A67C52] focus:border-[#A67C52] sm:text-sm"
+                               required placeholder="Enter your password" oninput="closeEye()" onfocus="closeEmojiEyes()" onblur="openEmojiEyes()">
+                        <button type="button" onclick="togglePassword()" class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                            <i class="fas fa-eye text-gray-400 hover:text-gray-600 cursor-pointer password-toggle" id="eye-icon"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Separated Remember me and Forgot Password -->
+            <div class="space-y-3">
+                <div class="flex items-center">
+                    <input type="checkbox" id="remember-me"
+                           class="h-4 w-4 text-[#A67C52] focus:ring-[#A67C52] border-green-300 rounded cursor-pointer">
+                    <label for="remember-me" class="ml-2 block text-sm text-gray-900 cursor-pointer">Remember me</label>
+                </div>
+                <div class="text-center">
+                    <a href="#" class="text-sm font-medium text-green hover:text-green flex items-center justify-center">
+                        <i class="fas fa-key mr-1"></i>Forgot Password?
+                    </a>
+                </div>
+            </div>
+
+            <button type="submit"
+                    class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-gradient-to-r from-[#A67C52] to-[#8B6742] hover:from-[#8B6742] hover:to-[#5C442E] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#A67C52] transform transition-all duration-150 hover:scale-[1.02]">
+                <i class="fas fa-sign-in-alt mr-2"></i>Sign In
+            </button>
+
+            <div class="text-center">
+                <p class="text-sm text-gray-600">Don't have an account?
+                    <a href="{% url 'auth:register' %}" class="font-medium text-[#8B6742] hover:text-[#5C442E] flex items-center justify-center mt-2">
+                        <i class="fas fa-user-plus mr-1"></i>Register here
+                    </a>
+                </p>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- CSS for animated emoji face -->
+<style>
+    .emoji-face {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .face {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, #FFD700, #FFA500);
+        border-radius: 50%;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+        animation: bounce 2s infinite ease-in-out;
+    }
+
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-5px); }
+    }
+
+    .eyes {
+        display: flex;
+        gap: 18px;
+        margin-bottom: 8px;
+    }
+
+    .eye {
+        width: 12px;
+        height: 12px;
+        background: #333;
+        border-radius: 50%;
+        position: relative;
+        transition: all 0.3s ease;
+    }
+
+    .eye.closed {
+        height: 2px;
+        border-radius: 2px;
+        background: #333;
+        transform: translateY(5px);
+    }
+
+    .eyeball {
+        width: 6px;
+        height: 6px;
+        background: white;
+        border-radius: 50%;
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        transition: all 0.3s ease;
+    }
+
+    .eye.closed .eyeball {
+        opacity: 0;
+    }
+
+    .mouth {
+        width: 20px;
+        height: 10px;
+        border: 2px solid #333;
+        border-top: none;
+        border-radius: 0 0 20px 20px;
+        margin-top: 5px;
+    }
+
+    /* Hover effect for the face */
+    .face:hover {
+        transform: scale(1.1);
+        box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
+    }
+</style>
+
+<!-- JS for password toggle + emoji animation -->
+<script>
+    const passwordInput = document.getElementById('id_password');
+    const eyeIcon = document.getElementById('eye-icon');
+    const leftEye = document.getElementById('left-eye');
+    const rightEye = document.getElementById('right-eye');
+
+    function togglePassword() {
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            eyeIcon.classList.replace('fa-eye', 'fa-eye-slash');
+        } else {
+            passwordInput.type = 'password';
+            eyeIcon.classList.replace('fa-eye-slash', 'fa-eye');
+        }
+    }
+
+    function closeEye() {
+        if (passwordInput.value.length > 0 && eyeIcon.classList.contains('fa-eye')) {
+            eyeIcon.classList.replace('fa-eye', 'fa-eye-slash');
+        } else if (passwordInput.value.length === 0 && eyeIcon.classList.contains('fa-eye-slash')) {
+            eyeIcon.classList.replace('fa-eye-slash', 'fa-eye');
+        }
+    }
+
+    // Emoji eye animation functions
+    function closeEmojiEyes() {
+        leftEye.classList.add('closed');
+        rightEye.classList.add('closed');
+    }
+
+    function openEmojiEyes() {
+        leftEye.classList.remove('closed');
+        rightEye.classList.remove('closed');
+    }
+
+    // Add some fun interactions
+    document.addEventListener('DOMContentLoaded', function() {
+        const face = document.querySelector('.face');
+        
+        // Make eyes follow cursor when hovering over the form
+        const form = document.querySelector('form');
+        form.addEventListener('mousemove', function(e) {
+            if (!leftEye.classList.contains('closed')) {
+                const rect = face.getBoundingClientRect();
+                const faceX = rect.left + rect.width / 2;
+                const faceY = rect.top + rect.height / 2;
+                
+                const angle = Math.atan2(e.clientY - faceY, e.clientX - faceX);
+                const eyeX = Math.cos(angle) * 2;
+                const eyeY = Math.sin(angle) * 2;
+                
+                const eyeballs = document.querySelectorAll('.eyeball');
+                eyeballs.forEach(eyeball => {
+                    eyeball.style.transform = `translate(${eyeX}px, ${eyeY}px)`;
+                });
+            }
+        });
+
+        // Reset eyeball position when mouse leaves
+        form.addEventListener('mouseleave', function() {
+            const eyeballs = document.querySelectorAll('.eyeball');
+            eyeballs.forEach(eyeball => {
+                eyeball.style.transform = 'translate(2px, 2px)';
+            });
+        });
+    });
+</script>
+{% endblock %}

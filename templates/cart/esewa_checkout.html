@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block title %}eSewa Payment{% endblock %}
+{% block content %}
+<div class="max-w-xl mx-auto py-10">
+    <h2 class="text-2xl font-bold text-green-600 mb-4">Pay with eSewa</h2>
+    <p class="mb-4">Order ID: {{ order.id }}</p>
+    <p>Total Amount: ${{ order.total }}</p>
+    <!-- Replace with real eSewa integration form later -->
+    <p class="text-sm text-gray-500 mt-6">eSewa gateway integration coming soon.</p>
+</div>
+{% endblock %}
