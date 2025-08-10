@@ -36,10 +36,8 @@ def orders_view(request):
 
 @login_required
 def track_order(request, order_id):
-    print(f"Attempting to render users/track_order.html for order {order_id}")
     try:
         order = Order.objects.get(id=order_id, user=request.user)
-        print(f"Order found: tracking_number={order.tracking_number}, courier_name={order.courier_name}")
-        return render(request, 'users/track_order.html', {'order': order})
+        return render(request, 'users/track_orders.html', {'order': order})
     except Order.DoesNotExist:
         raise Http404("The requested order does not exist or is not accessible to you.")

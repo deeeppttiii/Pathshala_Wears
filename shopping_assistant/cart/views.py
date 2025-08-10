@@ -3,6 +3,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.db import transaction
 from .models import Cart, CartItem, Order, OrderItem, Notification
 from django.core.mail import send_mail
 from products.models import Product
@@ -12,10 +13,13 @@ import json
 
 # Get or create the cart for the user
 def _get_cart(request):
+    if not request.user.is_authenticated:
+        return None
     cart, _ = Cart.objects.get_or_create(user=request.user)
     return cart
 
 # View Cart Page
+@login_required
 def cart_detail(request):
     cart = _get_cart(request)
     return render(request, 'cart/cart_detail.html', {'cart': cart})
@@ -27,7 +31,17 @@ def cart_add(request, pk):
     cart = _get_cart(request)
 
     if request.method == 'POST':
-        quantity = int(request.POST.get('quantity', 1))
+        if product.stock <= 0:
+            messages.error(request, 'Sorry, this item is currently out of stock.')
+            return redirect('products:product_detail', slug=product.slug)
+
+        try:
+            quantity = int(request.POST.get('quantity', 1))
+        except (TypeError, ValueError):
+            quantity = 1
+
+        if quantity < 1:
+            quantity = 1
 
         if quantity > product.stock:
             messages.error(request, 'Sorry, we don\'t have enough stock.')
@@ -46,12 +60,18 @@ def cart_add(request, pk):
     return redirect('cart:cart')
 
 # Increase quantity (from cart page)
+@login_required
 def cart_increase(request, product_id):
     if request.method != 'POST':
         return redirect('cart:cart')
 
     cart = _get_cart(request)
     product = get_object_or_404(Product, id=product_id)
+
+    if product.stock <= 0:
+        messages.warning(request, "This item is currently out of stock.")
+        return redirect('cart:cart')
+
     cart_item, _ = CartItem.objects.get_or_create(cart=cart, product=product)
 
     if cart_item.quantity < product.stock:
@@ -63,6 +83,7 @@ def cart_increase(request, product_id):
     return redirect('cart:cart')
 
 # Decrease quantity (from cart page)
+@login_required
 def cart_decrease(request, product_id):
     if request.method != 'POST':
         return redirect('cart:cart')
@@ -83,6 +104,7 @@ def cart_decrease(request, product_id):
     return redirect('cart:cart')
 
 # Remove item from cart
+@login_required
 def cart_remove(request, product_id):
     cart = _get_cart(request)
     product = get_object_or_404(Product, id=product_id)
@@ -96,6 +118,7 @@ def cart_remove(request, product_id):
     return redirect('cart:cart')
 
 # eSewa Checkout
+@login_required
 def esewa_checkout(request, order_id):
     order = get_object_or_404(Order, id=order_id, user=request.user)
 
@@ -108,9 +131,10 @@ def esewa_checkout(request, order_id):
         'merchant_code': 'YOUR_MERCHANT_CODE'  # Replace with your real eSewa merchant code
     }
 
-    return render(request, 'cart/esewa_payment.html', context)
+    return render(request, 'cart/esewa_checkout.html', context)
 
 # eSewa Verify
+@login_required
 def esewa_verify(request):
     oid = request.GET.get('oid')
     amt = request.GET.get('amt')
@@ -143,11 +167,12 @@ def esewa_verify(request):
         return redirect('cart:order_failed')
 
 # Khalti Checkout
+@login_required
 def khalti_checkout(request, order_id):
     order = get_object_or_404(Order, id=order_id, user=request.user)
     url = "https://a.khalti.com/api/v2/epayment/initiate/"
 
-    secret_key = "779e8cd11a0a4de5aff106663f16d008"  # use sandbox key here
+    secret_key = settings.KHALTI_SECRET_KEY
 
     payload = {
         # Modified return URL to include order_id as parameter
@@ -163,7 +188,7 @@ def khalti_checkout(request, order_id):
     }
 
     headers = {
-        "Authorization": f"Key 779e8cd11a0a4de5aff106663f16d008",
+        "Authorization": f"Key {secret_key}",
         "Content-Type": "application/json",
     }
 
@@ -189,6 +214,7 @@ def khalti_checkout(request, order_id):
 
 # Modified khalti_verify to handle both GET (return from Khalti) and POST (AJAX verification)
 @csrf_exempt
+@login_required
 def khalti_verify(request):
     if request.method == "GET":
         # Handle return from Khalti payment
@@ -206,7 +232,7 @@ def khalti_verify(request):
             
             # Verify payment with Khalti
             url = "https://a.khalti.com/api/v2/epayment/lookup/"
-            headers = {"Authorization": "Key 779e8cd11a0a4de5aff106663f16d008"}
+            headers = {"Authorization": f"Key {settings.KHALTI_SECRET_KEY}"}
             payload = {"pidx": pidx}
 
             response = requests.post(url, headers=headers, json=payload)
@@ -244,7 +270,7 @@ def khalti_verify(request):
             order = get_object_or_404(Order, id=order_id, user=request.user)
 
             url = "https://a.khalti.com/api/v2/epayment/lookup/"
-            headers = {"Authorization": "Key 779e8cd11a0a4de5aff106663f16d008"}
+            headers = {"Authorization": f"Key {settings.KHALTI_SECRET_KEY}"}
             payload = {"pidx": pidx}
 
             response = requests.post(url, headers=headers, json=payload)
@@ -284,34 +310,57 @@ def checkout(request):
             messages.error(request, "Please select a payment method.")
             return redirect('cart:checkout')
 
-        # Create and save the Order instance first
-        order = Order.objects.create(
-            user=request.user,
-            payment_method=payment_method,
-            total=0  # Temporary value, will be updated later
-        )
+        cart_items = list(cart.items.select_related('product'))
+        for item in cart_items:
+            if item.quantity > item.product.stock:
+                if item.product.stock > 0:
+                    item.quantity = item.product.stock
+                    item.save(update_fields=['quantity'])
+                    messages.error(
+                        request,
+                        f"{item.product.name} only has {item.product.stock} left. Your cart was updated."
+                    )
+                else:
+                    item.delete()
+                    messages.error(request, f"{item.product.name} is out of stock and was removed from your cart.")
+                return redirect('cart:cart')
 
-        # Transfer cart items to order and update stock
-        total = 0
-        for item in cart.items.all():
-            order_item = OrderItem.objects.create(
-                order=order,
-                product=item.product,
-                quantity=item.quantity,
-                price=item.product.price
+        with transaction.atomic():
+            locked_products = Product.objects.select_for_update().in_bulk(
+                [item.product_id for item in cart_items]
             )
-            total += order_item.get_cost()
-            item.product.stock -= item.quantity
-            item.product.save()
 
-        # Update total and save the order
-        order.total = total
-        order.save()
+            for item in cart_items:
+                product = locked_products[item.product_id]
+                if item.quantity > product.stock:
+                    messages.error(request, f"{product.name} does not have enough stock right now.")
+                    return redirect('cart:cart')
 
-        # Clear cart
-        cart.items.all().delete()
-        cart.is_active = False
-        cart.save()
+            order = Order.objects.create(
+                user=request.user,
+                payment_method=payment_method,
+                total=0
+            )
+
+            total = 0
+            for item in cart_items:
+                product = locked_products[item.product_id]
+                order_item = OrderItem.objects.create(
+                    order=order,
+                    product=product,
+                    quantity=item.quantity,
+                    price=product.current_price
+                )
+                total += order_item.get_cost()
+                product.stock -= item.quantity
+                product.save(update_fields=['stock'])
+
+            order.total = total
+            order.save(update_fields=['total'])
+
+            cart.items.all().delete()
+            cart.is_active = False
+            cart.save(update_fields=['is_active'])
 
         # Redirect based on payment method
         if payment_method == 'cod':
@@ -337,7 +386,7 @@ def checkout(request):
 def admin_update_order_status(request, order_id):
     if not request.user.is_staff:
         messages.error(request, 'Unauthorized access.')
-        return redirect('home')
+        return redirect('products:product_list')
     order = get_object_or_404(Order, id=order_id)
     if request.method == 'POST':
         order.status = request.POST.get('status')
