@@ -145,7 +145,7 @@ button { cursor: pointer; }
 .nav-links > a:not(.nav-cta)::after, .link-button::after {
   content: none;
 }
-.nav-cta, .btn-primary {
+.btn-primary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -159,7 +159,22 @@ button { cursor: pointer; }
   box-shadow: 0 18px 38px rgba(13,47,38,.22);
   transition: transform .22s ease, box-shadow .22s ease;
 }
+.nav-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--primary) !important;
+  color: #fff !important;
+  font-weight: 900;
+  padding: 13px 20px;
+  box-shadow: 0 18px 38px rgba(13,47,38,.22);
+  transition: transform .22s ease, box-shadow .22s ease, background .22s ease;
+}
 .btn-primary:hover, .nav-cta:hover { transform: translateY(-2px); box-shadow: 0 22px 44px rgba(13,47,38,.3); }
+.nav-cta:hover { background: #071b16 !important; color: #fff !important; }
 .btn-secondary, .btn-outline {
   display: inline-flex;
   align-items: center;
