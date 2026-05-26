@@ -1,0 +1,30 @@
+# Virtual environments
+venv/
+.venv/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Database
+db.sqlite3
+
+# Logs
+*.log
+
+# Media cache
+media/
+
+# Python installation
+python312/
+python-3.12.5-amd64.exe
+
+# VS Code
+.vscode/
+
+# Environment variables
+.env
+
+# OS files
+Thumbs.db
+.DS_Store

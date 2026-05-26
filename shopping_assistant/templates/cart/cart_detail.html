@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block title %}Cart - Pathshala Wear{% endblock %}
+
+{% block content %}
+<section class="section" style="margin-top: 0;" data-reveal>
+  <div class="section-head">
+    <div>
+      <span class="page-kicker">Shopping bag</span>
+      <h1 class="section-title">Your cart</h1>
+      <p class="section-subtitle">Review your selected pieces before checkout.</p>
+    </div>
+    <a href="{% url 'products:product_list' %}" class="btn-outline">Continue shopping</a>
+  </div>
+
+  {% if cart.items.all %}
+    <div class="cart-layout">
+      <div class="cart-list">
+        {% for item in cart.items.all %}
+          <article class="cart-item">
+            {% if item.product.image %}
+              <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}">
+            {% else %}
+              <div style="width:96px;height:112px;border-radius:16px;background:#eee8df;"></div>
+            {% endif %}
+            <div>
+              <span class="product-meta">{{ item.product.category.name }}</span>
+              <h3 class="product-name">{{ item.product.name }}</h3>
+              <div class="price">${{ item.product.price }}</div>
+              <div class="quantity-control" style="margin-top: 12px;">
+                <form method="post" action="{% url 'cart:cart_decrease' item.product.id %}">{% csrf_token %}<button type="submit"><i class="fas fa-minus"></i></button></form>
+                <span>{{ item.quantity }}</span>
+                <form method="post" action="{% url 'cart:cart_increase' item.product.id %}">{% csrf_token %}<button type="submit"><i class="fas fa-plus"></i></button></form>
+              </div>
+            </div>
+            <div style="text-align: right;">
+              <strong class="price">${{ item.get_cost }}</strong>
+              <form action="{% url 'cart:cart_remove' item.product.id %}" method="post" style="margin-top: 14px;">
+                {% csrf_token %}
+                <button type="submit" class="btn-outline" style="color: var(--danger);">Remove</button>
+              </form>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+
+      <aside class="summary-card">
+        <span class="page-kicker">Order summary</span>
+        <div class="summary-line"><span>Subtotal</span><strong>${{ cart.total }}</strong></div>
+        <div class="summary-line"><span>Delivery</span><strong>Calculated next</strong></div>
+        <div class="field" style="margin-top: 16px;">
+          <label>Coupon code</label>
+          <input type="text" placeholder="PATHSHALA10">
+        </div>
+        <div class="summary-total"><span>Total</span><span>${{ cart.total }}</span></div>
+        <a href="{% url 'cart:checkout' %}" class="btn-primary" style="width: 100%;">Checkout <i class="fas fa-arrow-right"></i></a>
+      </aside>
+    </div>
+  {% else %}
+    <div class="empty-state">
+      <i class="fas fa-bag-shopping" style="font-size: 52px; color: #c9c1b6;"></i>
+      <h2>Your cart is empty</h2>
+      <p>Add products from the collection and they will appear here.</p>
+      <a href="{% url 'products:product_list' %}" class="btn-primary">Start shopping</a>
+    </div>
+  {% endif %}
+</section>
+{% endblock %}

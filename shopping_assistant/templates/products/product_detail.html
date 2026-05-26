@@ -1,0 +1,154 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ product.name }} - Pathshala Wear{% endblock %}
+
+{% block content %}
+<section class="product-detail" data-reveal>
+  <div class="gallery-card">
+    <div class="gallery-main">
+      {% if product.images.first %}
+        <img id="mainProductImage" src="{{ product.images.first.image.url }}" alt="{{ product.images.first.alt_text|default:product.name }}">
+      {% elif product.image %}
+        <img id="mainProductImage" src="{{ product.image.url }}" alt="{{ product.name }}">
+      {% else %}
+        <div class="empty-state">No image available</div>
+      {% endif %}
+    </div>
+    <div class="thumb-row">
+      {% if product.image %}
+        <img src="{{ product.image.url }}" alt="{{ product.name }}" onclick="swapProductImage(this.src)">
+      {% endif %}
+      {% for image in images %}
+        <img src="{{ image.image.url }}" alt="{{ image.alt_text|default:product.name }}" onclick="swapProductImage(this.src)">
+      {% endfor %}
+    </div>
+  </div>
+
+  <aside class="detail-card">
+    <div class="option-grid">
+      <span class="badge badge-neutral">{{ product.category.name }}</span>
+      {% if product.discount_price %}<span class="badge badge-sale">{{ product.get_discount_percentage }}% off</span>{% endif %}
+      {% if product.stock > 0 %}<span class="status-pill status-in">In stock</span>{% else %}<span class="status-pill status-out">Out of stock</span>{% endif %}
+    </div>
+    <h1 class="detail-title">{{ product.name }}</h1>
+    <div class="rating">★★★★★ <span style="color: var(--muted);">Customer favourite</span></div>
+    <p class="detail-description">{{ product.description }}</p>
+
+    <div class="detail-price">
+      {% if product.discount_price %}
+        <strong>${{ product.discount_price }}</strong>
+        <span class="old-price">${{ product.price }}</span>
+      {% else %}
+        <strong>${{ product.price }}</strong>
+      {% endif %}
+    </div>
+
+    <div>
+      <span class="page-kicker">Select size</span>
+      <div class="option-grid">
+        <button class="option active" type="button">S</button>
+        <button class="option" type="button">M</button>
+        <button class="option" type="button">L</button>
+        <button class="option" type="button">XL</button>
+      </div>
+    </div>
+
+    <div>
+      <span class="page-kicker">Color</span>
+      <div class="option-grid">
+        <button class="option active" type="button">Classic</button>
+        <button class="option" type="button">Black</button>
+        <button class="option" type="button">Green</button>
+      </div>
+    </div>
+
+    {% if product.stock > 0 %}
+      <form method="post" action="{% url 'cart:cart_add' product.id %}" class="qty-add">
+        {% csrf_token %}
+        <input type="number" name="quantity" value="1" min="1" max="{{ product.stock }}" aria-label="Quantity">
+        <button type="submit" class="btn-primary"><i class="fas fa-bag-shopping"></i> Add to Cart</button>
+      </form>
+      <a href="{% url 'cart:checkout' %}" class="btn-outline" style="width: 100%; margin-top: 12px;">Buy Now</a>
+    {% else %}
+      <button class="btn-outline" disabled style="width: 100%; opacity: .6;">Out of Stock</button>
+    {% endif %}
+
+    <div class="promo-card gold" style="margin-top: 22px; min-height: auto;">
+      <strong>Delivery and care</strong>
+      <p style="margin: 6px 0 0; color: var(--muted);">Premium packaging, local delivery, and easy order tracking from your dashboard.</p>
+    </div>
+  </aside>
+</section>
+
+<section class="section" data-reveal>
+  <div class="section-head">
+    <div>
+      <span class="page-kicker">Customer reviews</span>
+      <h2 class="section-title">What shoppers say</h2>
+    </div>
+  </div>
+  <div class="testimonial-grid">
+    {% for review in reviews %}
+      <article class="review-card">
+        <div class="rating">{% for i in "12345" %}{% if forloop.counter <= review.rating %}★{% else %}☆{% endif %}{% endfor %}</div>
+        <p>{{ review.comment }}</p>
+        <strong>{{ review.user.username }}</strong>
+      </article>
+    {% empty %}
+      <article class="review-card">
+        <p>No reviews yet. Be the first to review this product after purchase.</p>
+      </article>
+    {% endfor %}
+  </div>
+  {% if user.is_authenticated %}
+    <form method="post" action="{% url 'products:add_review' product.id %}" class="app-card form-grid" style="padding: 24px; margin-top: 20px;">
+      {% csrf_token %}
+      <div class="field">
+        <label>Rating</label>
+        <select name="rating">
+          <option value="5">5 stars</option>
+          <option value="4">4 stars</option>
+          <option value="3">3 stars</option>
+          <option value="2">2 stars</option>
+          <option value="1">1 star</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Review</label>
+        <textarea name="comment" rows="4" placeholder="Share your thoughts"></textarea>
+      </div>
+      <button class="btn-primary" type="submit">Submit Review</button>
+    </form>
+  {% endif %}
+</section>
+
+{% if related_products %}
+<section class="section" data-reveal>
+  <div class="section-head">
+    <div>
+      <span class="page-kicker">Complete the look</span>
+      <h2 class="section-title">Related products</h2>
+    </div>
+  </div>
+  <div class="product-row">
+    {% for product in related_products %}
+      {% include 'products/product_card.html' with product=product %}
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+<script>
+  function swapProductImage(src) {
+    const main = document.getElementById('mainProductImage');
+    if (main) main.src = src;
+  }
+  document.querySelectorAll('.option').forEach((button) => {
+    button.addEventListener('click', () => {
+      const group = button.parentElement;
+      group.querySelectorAll('.option').forEach((item) => item.classList.remove('active'));
+      button.classList.add('active');
+    });
+  });
+</script>
+{% endblock %}

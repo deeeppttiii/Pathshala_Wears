@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}Khalti Payment{% endblock %}
+
+{% block content %}
+<div class="mx-auto max-w-xl">
+  <section class="app-card p-6 text-center sm:p-8">
+    <span class="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-md bg-stone-100 text-3xl text-stone-900">
+      <i class="fas fa-credit-card"></i>
+    </span>
+    <p class="page-kicker">Payment</p>
+    <h1 class="mt-2 text-3xl font-extrabold text-stone-950">Redirecting to Khalti</h1>
+    <div class="mt-6 rounded-md bg-stone-50 p-4 text-left">
+      <p class="flex justify-between text-sm"><span class="text-stone-500">Order ID</span><span class="font-bold">#{{ order.id }}</span></p>
+      <p class="mt-2 flex justify-between text-sm"><span class="text-stone-500">Total Amount</span><span class="font-bold text-emerald-800">Rs {{ order.total }}</span></p>
+    </div>
+    <div class="mt-6">
+      <div class="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-2 border-stone-200 border-t-emerald-700"></div>
+      <p class="text-stone-500">Please wait while we redirect you to Khalti.</p>
+    </div>
+    <a id="manual-pay-btn" href="{{ payment_url }}" class="btn-primary mt-6"><i class="fas fa-arrow-up-right-from-square"></i> Continue to Khalti</a>
+    <p class="mt-4 text-xs text-stone-500">If you are not redirected automatically, use the button above.</p>
+  </section>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    let redirected = false;
+    const redirectTimer = setTimeout(function() {
+      if (!redirected) {
+        redirected = true;
+        window.location.href = "{{ payment_url }}";
+      }
+    }, 3000);
+
+    const manualButton = document.getElementById('manual-pay-btn');
+    if (manualButton) {
+      manualButton.addEventListener('click', function() {
+        redirected = true;
+        clearTimeout(redirectTimer);
+      });
+    }
+
+    window.addEventListener('pageshow', function(event) {
+      if (event.persisted || performance.navigation.type === 2) {
+        window.location.href = "{% url 'cart:checkout' %}";
+      }
+    });
+  });
+</script>
+{% endblock %}

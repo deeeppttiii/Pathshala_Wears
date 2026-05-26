@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}eSewa Payment{% endblock %}
+
+{% block content %}
+<div class="mx-auto max-w-xl">
+  <section class="app-card p-6 text-center sm:p-8">
+    <span class="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-md bg-emerald-50 text-3xl text-emerald-700">
+      <i class="fas fa-credit-card"></i>
+    </span>
+    <p class="page-kicker">Payment</p>
+    <h1 class="mt-2 text-3xl font-extrabold text-stone-950">Pay with eSewa</h1>
+    <div class="mt-6 rounded-md bg-stone-50 p-4 text-left">
+      <p class="flex justify-between text-sm"><span class="text-stone-500">Order ID</span><span class="font-bold">#{{ order.id }}</span></p>
+      <p class="mt-2 flex justify-between text-sm"><span class="text-stone-500">Total Amount</span><span class="font-bold text-emerald-800">${{ order.total }}</span></p>
+    </div>
+    <p class="mt-5 text-sm text-stone-500">eSewa gateway integration coming soon.</p>
+  </section>
+</div>
+{% endblock %}

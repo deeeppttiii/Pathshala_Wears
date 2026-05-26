@@ -1,0 +1,247 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Pathshala Wear - Premium Fashion Essentials{% endblock %}
+
+{% block content %}
+<section class="hero" data-reveal>
+  <div class="hero-content">
+    <span class="eyebrow"><i class="fas fa-sparkles"></i> New season collection</span>
+    <h1>Minimal fashion for everyday confidence.</h1>
+    <p>Discover refined essentials, comfortable silhouettes, and statement pieces crafted for modern wardrobes.</p>
+    <div class="hero-actions">
+      <a href="#new-arrivals" class="btn-primary">Shop New Arrivals <i class="fas fa-arrow-right"></i></a>
+      <a href="#featured" class="btn-secondary">Explore Featured</a>
+    </div>
+  </div>
+  <div class="hero-stats">
+    <div><strong>{{ products.paginator.count|default:0 }}</strong><span>Products</span></div>
+    <div><strong>{{ categories|length }}</strong><span>Categories</span></div>
+    <div><strong>24h</strong><span>Fast support</span></div>
+  </div>
+</section>
+
+<section class="service-strip" data-reveal>
+  <div>
+    <i class="fas fa-truck-fast"></i>
+    <strong>Fast local delivery</strong>
+    <span>Simple order tracking after checkout</span>
+  </div>
+  <div>
+    <i class="fas fa-shield-halved"></i>
+    <strong>Secure payments</strong>
+    <span>Cash, eSewa, and Khalti options</span>
+  </div>
+  <div>
+    <i class="fas fa-shirt"></i>
+    <strong>Curated essentials</strong>
+    <span>Minimal pieces for everyday wear</span>
+  </div>
+  <div>
+    <i class="fas fa-headset"></i>
+    <strong>Support ready</strong>
+    <span>Help with orders and sizing</span>
+  </div>
+</section>
+
+<section class="section" data-reveal>
+  <div class="section-head">
+    <div>
+      <span class="page-kicker">Trending categories</span>
+      <h2 class="section-title">Shop by mood</h2>
+      <p class="section-subtitle">Quickly browse the collections that match your day, from campus-ready staples to elevated basics.</p>
+    </div>
+  </div>
+  <div class="product-row">
+    <a class="chip {% if not current_category %}is-active{% endif %}" href="{% url 'products:product_list' %}#new-arrivals">All Products</a>
+    {% for category in categories %}
+      <a class="chip {% if current_category == category.slug %}is-active{% endif %}" href="{% url 'products:product_list' %}?category={{ category.slug }}#new-arrivals">{{ category.name }}</a>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="section lookbook" data-reveal>
+  <div class="lookbook-copy">
+    <span class="page-kicker">Editorial lookbook</span>
+    <h2 class="section-title">Built for campus, city, and weekends.</h2>
+    <p>Pathshala Wear focuses on clean layers, easy movement, and a refined shopping flow. Mix neutral staples with standout textures to create a wardrobe that works every day.</p>
+    <a href="#new-arrivals" class="btn-primary">Shop the edit <i class="fas fa-arrow-right"></i></a>
+  </div>
+  <div class="lookbook-media">
+    <img src="/media/products/tshirt1.jpg" alt="Pathshala Wear outfit inspiration">
+    <div class="lookbook-note">
+      <strong>Style direction</strong>
+      <span>Layered, minimal, practical</span>
+    </div>
+  </div>
+</section>
+
+{% if featured_products %}
+<section class="section" id="featured" data-reveal>
+  <div class="section-head">
+    <div>
+      <span class="page-kicker">Curated edit</span>
+      <h2 class="section-title">Featured products</h2>
+      <p class="section-subtitle">Pieces selected for fit, comfort, and effortless styling.</p>
+    </div>
+    <a href="#new-arrivals" class="btn-outline">View all</a>
+  </div>
+  <div class="product-row">
+    {% for product in featured_products %}
+      {% include 'products/product_card.html' with product=product %}
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+<section class="section" data-reveal>
+  <div class="promo-grid">
+    <article class="promo-card dark">
+      <span class="page-kicker">Limited offer</span>
+      <h3>Up to 30% off selected essentials</h3>
+      <a href="#new-arrivals">Shop offer <i class="fas fa-arrow-right"></i></a>
+    </article>
+    <article class="promo-card gold">
+      <span class="page-kicker">Premium basics</span>
+      <h3>Clean cuts, better everyday wear</h3>
+      <a href="#new-arrivals">Discover basics</a>
+    </article>
+    <article class="promo-card cyan">
+      <span class="page-kicker">Fast checkout</span>
+      <h3>Secure payment and simple ordering</h3>
+      <a href="{% url 'cart:cart' %}">View cart</a>
+    </article>
+  </div>
+</section>
+
+<section class="section collection-tiles" data-reveal>
+  <a href="#new-arrivals" class="collection-tile tile-large">
+    <img src="/media/products/shirt_FKyWfJW.jpg" alt="New outerwear collection">
+    <span>Outerwear</span>
+    <strong>Structured layers for colder days</strong>
+  </a>
+  <a href="#new-arrivals" class="collection-tile">
+    <img src="/media/products/shirt_aAsknGY.jpg" alt="Shirt collection">
+    <span>Essentials</span>
+    <strong>Clean shirts and daily staples</strong>
+  </a>
+  <a href="#new-arrivals" class="collection-tile">
+    <img src="/media/products/f84304306171549e4c734ed205a30291.jpg" alt="Statement pieces">
+    <span>Statement</span>
+    <strong>Bold pieces with premium presence</strong>
+  </a>
+</section>
+
+<section class="section" id="new-arrivals" data-reveal>
+  <div class="section-head">
+    <div>
+      <span class="page-kicker">New arrivals</span>
+      <h2 class="section-title">Shop the collection</h2>
+      <p class="section-subtitle">Search, filter, and sort without leaving the premium storefront experience.</p>
+    </div>
+  </div>
+
+  <div class="store-layout">
+    <aside class="filter-panel">
+      <div class="filter-title">
+        <span><i class="fas fa-sliders"></i> Filters</span>
+      </div>
+      <form action="{% url 'products:product_list' %}#new-arrivals" method="get" class="form-grid">
+        <div class="field">
+          <label for="shop-search">Search</label>
+          <input id="shop-search" type="search" name="q" value="{{ search_query|default:'' }}" placeholder="Search products">
+        </div>
+        {% if current_category %}<input type="hidden" name="category" value="{{ current_category }}">{% endif %}
+        {% if current_sort %}<input type="hidden" name="sort" value="{{ current_sort }}">{% endif %}
+        <button class="btn-primary" type="submit">Apply Search</button>
+      </form>
+
+      <div style="height: 22px"></div>
+      <div class="filter-title"><span>Categories</span></div>
+      <div class="category-list">
+        <a href="{% url 'products:product_list' %}#new-arrivals" class="{% if not current_category %}is-active{% endif %}">All Products</a>
+        {% for category in categories %}
+          <a href="{% url 'products:product_list' %}?category={{ category.slug }}{% if current_sort %}&sort={{ current_sort }}{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}#new-arrivals" class="{% if current_category == category.slug %}is-active{% endif %}">{{ category.name }}</a>
+        {% endfor %}
+      </div>
+    </aside>
+
+    <div>
+      <div class="shop-tools">
+        <p class="section-subtitle">{{ products.paginator.count|default:0 }} products available</p>
+        <form method="get" action="{% url 'products:product_list' %}#new-arrivals">
+          {% if current_category %}<input type="hidden" name="category" value="{{ current_category }}">{% endif %}
+          {% if search_query %}<input type="hidden" name="q" value="{{ search_query }}">{% endif %}
+          <select name="sort" class="sort-select" onchange="this.form.submit()">
+            <option value="">Sort by</option>
+            <option value="name" {% if current_sort == 'name' %}selected{% endif %}>Name</option>
+            <option value="price_asc" {% if current_sort == 'price_asc' %}selected{% endif %}>Price: Low to High</option>
+            <option value="price_desc" {% if current_sort == 'price_desc' %}selected{% endif %}>Price: High to Low</option>
+          </select>
+        </form>
+      </div>
+
+      <div class="product-grid">
+        {% for product in products %}
+          {% include 'products/product_card.html' with product=product %}
+        {% empty %}
+          <div class="empty-state">
+            <i class="fas fa-bag-shopping" style="font-size: 44px; color: #c9c1b6;"></i>
+            <h3>No products found</h3>
+            <p>Try a different search term or category.</p>
+            <a href="{% url 'products:product_list' %}#new-arrivals" class="btn-primary">Reset filters</a>
+          </div>
+        {% endfor %}
+      </div>
+
+      {% if products.has_other_pages %}
+        <div class="hero-actions" style="justify-content: center; margin-top: 32px;">
+          {% if products.has_previous %}
+            <a class="btn-outline" href="?page={{ products.previous_page_number }}{% if current_sort %}&sort={{ current_sort }}{% endif %}{% if current_category %}&category={{ current_category }}{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}#new-arrivals">Previous</a>
+          {% endif %}
+          {% if products.has_next %}
+            <a class="btn-primary" href="?page={{ products.next_page_number }}{% if current_sort %}&sort={{ current_sort }}{% endif %}{% if current_category %}&category={{ current_category }}{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}#new-arrivals">Next</a>
+          {% endif %}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<section class="section" data-reveal>
+  <div class="testimonial-grid">
+    <article class="testimonial">
+      <div class="rating">★★★★★</div>
+      <p>"Clean product pages and fast checkout. The store feels much more premium now."</p>
+      <strong>Aarav K.</strong>
+    </article>
+    <article class="testimonial">
+      <div class="rating">★★★★★</div>
+      <p>"The card layout makes comparing products simple, even on mobile."</p>
+      <strong>Sneha M.</strong>
+    </article>
+    <article class="testimonial">
+      <div class="rating">★★★★★</div>
+      <p>"Minimal, elegant, and easy to browse. Exactly what fashion shopping should feel like."</p>
+      <strong>Ritika S.</strong>
+    </article>
+  </div>
+</section>
+
+<section class="section newsletter" data-reveal>
+  <div>
+    <span class="page-kicker">Style notes</span>
+    <h2 class="section-title">Get first access to new drops.</h2>
+    <p>Subscribe for collection launches, discount alerts, and styling inspiration.</p>
+  </div>
+  <form class="newsletter-form">
+    <input type="email" placeholder="Enter your email">
+    <button type="button">Subscribe</button>
+  </form>
+</section>
+
+<a href="{% url 'cart:cart' %}" class="floating-cart" aria-label="Open cart">
+  <i class="fas fa-bag-shopping"></i>
+  {% if cart and cart.item_count > 0 %}<span>{{ cart.item_count }}</span>{% endif %}
+</a>
+{% endblock %}

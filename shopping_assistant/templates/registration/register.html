@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block title %}Create Account - Pathshala Wear{% endblock %}
+
+{% block content %}
+<section class="auth-layout" data-reveal>
+  <div class="auth-art">
+    <span class="page-kicker">Join the club</span>
+    <h1 class="section-title">Build your profile for faster fashion shopping.</h1>
+    <p>Create an account to manage orders, save checkout details, and access new drops faster.</p>
+  </div>
+  <div class="auth-card">
+    <span class="page-kicker">New customer</span>
+    <h1 class="section-title">Create account</h1>
+    <form method="post" novalidate class="form-grid" style="margin-top: 24px;">
+      {% csrf_token %}
+      <div class="form-grid two">
+        <div class="field">
+          <label>First Name</label>
+          {{ form.first_name }}
+          {% if form.first_name.errors %}<small style="color: var(--danger); font-weight: 800;">{{ form.first_name.errors.0 }}</small>{% endif %}
+        </div>
+        <div class="field">
+          <label>Last Name</label>
+          {{ form.last_name }}
+          {% if form.last_name.errors %}<small style="color: var(--danger); font-weight: 800;">{{ form.last_name.errors.0 }}</small>{% endif %}
+        </div>
+      </div>
+      <div class="field">
+        <label>Username</label>
+        {{ form.username }}
+        {% if form.username.errors %}<small style="color: var(--danger); font-weight: 800;">{{ form.username.errors.0 }}</small>{% endif %}
+      </div>
+      <div class="field">
+        <label>Email</label>
+        {{ form.email }}
+        {% if form.email.errors %}<small style="color: var(--danger); font-weight: 800;">{{ form.email.errors.0 }}</small>{% endif %}
+      </div>
+      <div class="form-grid two">
+        <div class="field">
+          <label>Password</label>
+          {{ form.password1 }}
+          {% if form.password1.errors %}<small style="color: var(--danger); font-weight: 800;">{{ form.password1.errors.0 }}</small>{% endif %}
+        </div>
+        <div class="field">
+          <label>Confirm Password</label>
+          {{ form.password2 }}
+          {% if form.password2.errors %}<small style="color: var(--danger); font-weight: 800;">{{ form.password2.errors.0 }}</small>{% endif %}
+        </div>
+      </div>
+      <button type="submit" class="btn-primary">Create Account <i class="fas fa-arrow-right"></i></button>
+      <p style="text-align: center; color: var(--muted);">Already registered? <a href="{% url 'auth:login' %}" style="font-weight: 900; color: var(--primary);">Sign in</a></p>
+    </form>
+  </div>
+</section>
+{% endblock %}

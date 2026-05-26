@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block title %}Login - Pathshala Wear{% endblock %}
+
+{% block content %}
+<section class="auth-layout" data-reveal>
+  <div class="auth-art">
+    <span class="page-kicker">Member access</span>
+    <h1 class="section-title">Your wardrobe, one sign-in away.</h1>
+    <p>Track orders, save profile details, and continue shopping with a smoother checkout.</p>
+  </div>
+  <div class="auth-card">
+    <span class="page-kicker">Welcome back</span>
+    <h1 class="section-title">Sign in</h1>
+    <div class="social-login" style="margin: 22px 0;">
+      <button type="button"><i class="fab fa-google"></i> Google</button>
+      <button type="button"><i class="fab fa-facebook-f"></i> Facebook</button>
+    </div>
+    <form method="post" novalidate class="form-grid">
+      {% csrf_token %}
+      {% if form.errors %}
+        <div class="toast toast-error" style="position: static; max-width: none;">Invalid username or password. Please try again.</div>
+      {% endif %}
+      <div class="field">
+        <label for="id_username">Username</label>
+        <input type="text" name="username" id="id_username" required placeholder="Enter your username">
+      </div>
+      <div class="field">
+        <label for="id_password">Password</label>
+        <div class="password-wrap">
+          <input type="password" name="password" id="id_password" required placeholder="Enter your password">
+          <button type="button" onclick="togglePassword()" aria-label="Show password"><i class="fas fa-eye" id="eye-icon"></i></button>
+        </div>
+      </div>
+      <div style="display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap;">
+        <label style="font-weight: 800; color: var(--muted);"><input type="checkbox"> Remember me</label>
+        <a href="#" style="font-weight: 900; color: var(--primary);">Forgot password?</a>
+      </div>
+      <button type="submit" class="btn-primary">Sign In <i class="fas fa-arrow-right"></i></button>
+      <p style="text-align: center; color: var(--muted);">New here? <a href="{% url 'auth:register' %}" style="font-weight: 900; color: var(--primary);">Create an account</a></p>
+    </form>
+  </div>
+</section>
+
+<script>
+  function togglePassword() {
+    const input = document.getElementById('id_password');
+    const icon = document.getElementById('eye-icon');
+    const visible = input.type === 'text';
+    input.type = visible ? 'password' : 'text';
+    icon.classList.toggle('fa-eye', visible);
+    icon.classList.toggle('fa-eye-slash', !visible);
+  }
+</script>
+{% endblock %}

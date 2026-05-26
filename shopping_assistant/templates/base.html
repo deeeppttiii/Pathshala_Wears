@@ -1,0 +1,173 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}Pathshala Wear{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+  <link href="{% static 'css/style.css' %}?v=20260526-navpolish" rel="stylesheet" />
+  {% block extra_head %}{% endblock %}
+</head>
+<body class="{% if request.resolver_match.namespace == 'auth' %}auth-page{% endif %}">
+  <header class="site-header" id="siteHeader">
+    {% if request.resolver_match.namespace != 'auth' %}
+      <div class="top-strip">
+        <span>New season essentials are live</span>
+        <span>Free local delivery on selected orders</span>
+      </div>
+    {% endif %}
+
+    <nav class="navbar">
+      <a href="{% url 'products:product_list' %}" class="brand">
+        <span class="brand-mark">
+          <img src="{% static 'images/logo.png' %}" alt="Pathshala Wear logo">
+        </span>
+        <span>
+          <strong>Pathshala Wear</strong>
+          <small>Premium everyday fashion</small>
+        </span>
+      </a>
+
+      {% if request.resolver_match.namespace != 'auth' %}
+        <form class="nav-search" action="{% url 'products:product_list' %}" method="get">
+          <i class="fas fa-search"></i>
+          <input type="search" name="q" value="{{ search_query|default:'' }}" placeholder="Search shirts, tees, essentials">
+        </form>
+      {% endif %}
+
+      {% if request.resolver_match.namespace == 'auth' %}
+        <div class="auth-nav-action">
+          <a href="{% url 'products:product_list' %}" class="btn-outline"><i class="fas fa-arrow-left"></i> Back to shop</a>
+        </div>
+      {% else %}
+        <div class="nav-links" id="navLinks">
+          <a href="{% url 'products:product_list' %}">Shop</a>
+          <a href="{% url 'products:product_list' %}#new-arrivals">New Arrivals</a>
+          {% if user.is_authenticated %}
+            <a href="{% url 'users:orders' %}">Orders</a>
+            <a href="{% url 'users:profile' %}">Profile</a>
+            <a href="{% url 'cart:cart' %}" class="icon-link" aria-label="Cart">
+              <i class="fas fa-bag-shopping"></i>
+              {% if cart and cart.item_count > 0 %}<span>{{ cart.item_count }}</span>{% endif %}
+            </a>
+            <form method="post" action="{% url 'auth:logout' %}">
+              {% csrf_token %}
+              <button type="submit" class="link-button">Logout</button>
+            </form>
+          {% else %}
+            <a href="{% url 'auth:login' %}">Login</a>
+            <a href="{% url 'auth:register' %}" class="nav-cta">Sign Up</a>
+          {% endif %}
+        </div>
+      {% endif %}
+
+      {% if request.resolver_match.namespace != 'auth' %}
+        <button class="menu-toggle" id="mobileMenuButton" type="button" aria-label="Open menu">
+          <i class="fas fa-bars"></i>
+        </button>
+      {% endif %}
+    </nav>
+  </header>
+
+  {% if request.resolver_match.namespace != 'auth' %}
+    <div class="mobile-panel" id="mobilePanel">
+      <form class="mobile-search" action="{% url 'products:product_list' %}" method="get">
+        <input type="search" name="q" value="{{ search_query|default:'' }}" placeholder="Search products">
+        <button type="submit"><i class="fas fa-search"></i></button>
+      </form>
+      <a href="{% url 'products:product_list' %}">Shop</a>
+      <a href="{% url 'products:product_list' %}#new-arrivals">New Arrivals</a>
+      {% if user.is_authenticated %}
+        <a href="{% url 'cart:cart' %}">Cart</a>
+        <a href="{% url 'users:orders' %}">Orders</a>
+        <a href="{% url 'users:profile' %}">Profile</a>
+      {% else %}
+        <a href="{% url 'auth:login' %}">Login</a>
+        <a href="{% url 'auth:register' %}">Create Account</a>
+      {% endif %}
+    </div>
+  {% endif %}
+
+  {% if messages %}
+    <section class="toast-stack">
+      {% for message in messages %}
+        <div class="toast toast-{{ message.tags|default:'info' }}">
+          <i class="fas fa-circle-info"></i>
+          <span>{{ message }}</span>
+        </div>
+      {% endfor %}
+    </section>
+  {% endif %}
+
+  <main class="page-shell">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="footer">
+    <div class="footer-grid">
+      <div>
+        <h3>Pathshala Wear</h3>
+        <p>Modern essentials with clean silhouettes, accessible prices, and a smoother shopping experience.</p>
+        <div class="social-row">
+          <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+          <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+          <a href="#" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+        </div>
+      </div>
+      <div>
+        <h4>Shop</h4>
+        <a href="{% url 'products:product_list' %}">All Products</a>
+        <a href="{% url 'products:product_list' %}#featured">Featured</a>
+        <a href="{% url 'products:product_list' %}#new-arrivals">New Arrivals</a>
+      </div>
+      <div>
+        <h4>Account</h4>
+        <a href="{% url 'cart:cart' %}">Cart</a>
+        <a href="{% url 'users:orders' %}">Orders</a>
+        <a href="{% url 'users:profile' %}">Profile</a>
+      </div>
+      <div>
+        <h4>Newsletter</h4>
+        <p>Get drops, offers, and style notes.</p>
+        <form class="footer-form">
+          <input type="email" placeholder="Email address">
+          <button type="button">Join</button>
+        </form>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 Pathshala Wear. All rights reserved.</span>
+      <span>Designed for premium commerce.</span>
+    </div>
+  </footer>
+
+  {% block extra_js %}{% endblock %}
+  <script>
+    const header = document.getElementById('siteHeader');
+    const menuButton = document.getElementById('mobileMenuButton');
+    const mobilePanel = document.getElementById('mobilePanel');
+
+    window.addEventListener('scroll', () => {
+      header.classList.toggle('is-scrolled', window.scrollY > 12);
+    });
+
+    if (menuButton && mobilePanel) {
+      menuButton.addEventListener('click', () => {
+        mobilePanel.classList.toggle('is-open');
+      });
+    }
+
+    const reveals = document.querySelectorAll('[data-reveal]');
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) entry.target.classList.add('is-visible');
+      });
+    }, { threshold: 0.12 });
+    reveals.forEach((item) => revealObserver.observe(item));
+  </script>
+</body>
+</html>

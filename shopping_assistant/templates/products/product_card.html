@@ -1,0 +1,45 @@
+{% load static %}
+<article class="product-card">
+  <a href="{{ product.get_absolute_url }}" class="product-media">
+    {% if product.discount_price %}
+      <span class="product-badge">Sale</span>
+    {% elif product.featured %}
+      <span class="product-badge">Featured</span>
+    {% endif %}
+    <button type="button" class="wishlist" aria-label="Add to wishlist"><i class="far fa-heart"></i></button>
+    {% if product.images.first %}
+      <img src="{{ product.images.first.image.url }}" alt="{{ product.images.first.alt_text|default:product.name }}">
+    {% elif product.image %}
+      <img src="{{ product.image.url }}" alt="{{ product.name }}">
+    {% else %}
+      <img src="{% static 'images/logo.png' %}" alt="{{ product.name }}">
+    {% endif %}
+    {% if product.stock > 0 %}
+      <form method="post" action="{% url 'cart:cart_add' product.id %}" class="quick-add">
+        {% csrf_token %}
+        <input type="hidden" name="quantity" value="1">
+        <button type="submit" class="btn-primary" style="width: 100%;">Quick Add</button>
+      </form>
+    {% endif %}
+  </a>
+  <div class="product-info">
+    <span class="product-meta">{{ product.category.name }}</span>
+    <a href="{{ product.get_absolute_url }}"><h3 class="product-name line-clamp-2">{{ product.name }}</h3></a>
+    <div class="rating">★★★★☆ <span style="color: #8b928d;">4.8</span></div>
+    <div class="price-row">
+      {% if product.discount_price %}
+        <span class="price">${{ product.discount_price }}</span>
+        <span class="old-price">${{ product.price }}</span>
+      {% else %}
+        <span class="price">${{ product.price }}</span>
+      {% endif %}
+    </div>
+    <div style="margin-top: 12px;">
+      {% if product.stock > 0 %}
+        <span class="status-pill status-in"><i class="fas fa-check"></i> In stock</span>
+      {% else %}
+        <span class="status-pill status-out"><i class="fas fa-xmark"></i> Out of stock</span>
+      {% endif %}
+    </div>
+  </div>
+</article>

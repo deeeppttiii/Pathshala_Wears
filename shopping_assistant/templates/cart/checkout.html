@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Checkout - Pathshala Wear{% endblock %}
+
+{% block content %}
+<section data-reveal>
+  <div class="section-head">
+    <div>
+      <span class="page-kicker">Secure checkout</span>
+      <h1 class="section-title">Complete your order</h1>
+      <p class="section-subtitle">Choose a payment method and place your order with confidence.</p>
+    </div>
+  </div>
+
+  <div class="stepper">
+    <div class="step active">1. Cart</div>
+    <div class="step active">2. Payment</div>
+    <div class="step">3. Confirmation</div>
+  </div>
+
+  <div class="checkout-layout">
+    <section class="app-card" style="padding: 26px;">
+      <form method="post" action="{% url 'cart:checkout' %}" class="form-grid">
+        {% csrf_token %}
+        <div>
+          <span class="page-kicker">Payment method</span>
+          <div class="payment-options" style="margin-top: 14px;">
+            <label class="payment-option">
+              <input type="radio" name="payment_method" value="cod" checked>
+              <span class="brand-mark" style="display:grid;place-items:center;"><i class="fas fa-money-bill-wave"></i></span>
+              <span><strong>Cash on Delivery</strong><br><small>Pay when your order arrives.</small></span>
+            </label>
+            <label class="payment-option">
+              <input type="radio" name="payment_method" value="esewa">
+              <span class="brand-mark" style="display:grid;place-items:center;"><img src="{% static 'images/esewa.png' %}" alt="eSewa"></span>
+              <span><strong>eSewa</strong><br><small>Continue to eSewa payment.</small></span>
+            </label>
+            <label class="payment-option">
+              <input type="radio" name="payment_method" value="khalti">
+              <span class="brand-mark" style="display:grid;place-items:center;"><img src="{% static 'images/khalti.png' %}" alt="Khalti"></span>
+              <span><strong>Khalti</strong><br><small>Continue to Khalti payment.</small></span>
+            </label>
+          </div>
+        </div>
+        <button class="btn-primary" type="submit">Confirm & Place Order <i class="fas fa-lock"></i></button>
+      </form>
+    </section>
+
+    <aside class="summary-card">
+      <span class="page-kicker">Order summary</span>
+      {% for item in cart.items.all %}
+        <div class="summary-line">
+          <span>{{ item.product.name }} x {{ item.quantity }}</span>
+          <strong>${{ item.get_cost }}</strong>
+        </div>
+      {% endfor %}
+      <div class="summary-total"><span>Total</span><span>${{ cart.total }}</span></div>
+    </aside>
+  </div>
+</section>
+{% endblock %}

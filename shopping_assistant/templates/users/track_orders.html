@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="mx-auto max-w-3xl">
+  <div class="mb-6">
+    <p class="page-kicker">Order tracking</p>
+    <h1 class="section-title mt-1">Order #{{ order.id }}</h1>
+  </div>
+
+  <section class="app-card p-6 sm:p-8">
+    <div class="grid gap-4 sm:grid-cols-2">
+      <div class="rounded-md bg-stone-50 p-4">
+        <p class="text-sm font-bold text-stone-500">Status</p>
+        <p class="mt-1 font-extrabold text-stone-950">{{ order.get_status_display }}</p>
+      </div>
+      <div class="rounded-md bg-stone-50 p-4">
+        <p class="text-sm font-bold text-stone-500">Total</p>
+        <p class="mt-1 font-extrabold text-emerald-800">Rs. {{ order.total }}</p>
+      </div>
+      <div class="rounded-md bg-stone-50 p-4">
+        <p class="text-sm font-bold text-stone-500">Payment Method</p>
+        <p class="mt-1 font-extrabold text-stone-950">{{ order.get_payment_method_display }}</p>
+      </div>
+      <div class="rounded-md bg-stone-50 p-4">
+        <p class="text-sm font-bold text-stone-500">Order Date</p>
+        <p class="mt-1 font-extrabold text-stone-950">{{ order.created_at|date:"Y-m-d H:i" }}</p>
+      </div>
+    </div>
+
+    <div class="mt-8 grid gap-2 sm:grid-cols-4">
+      <div class="rounded-md p-3 text-center text-sm font-bold {% if order.status == 'pending' %}bg-emerald-700 text-white{% else %}bg-stone-100 text-stone-600{% endif %}">Pending</div>
+      <div class="rounded-md p-3 text-center text-sm font-bold {% if order.status == 'processing' %}bg-emerald-700 text-white{% else %}bg-stone-100 text-stone-600{% endif %}">Processing</div>
+      <div class="rounded-md p-3 text-center text-sm font-bold {% if order.status == 'shipped' %}bg-emerald-700 text-white{% else %}bg-stone-100 text-stone-600{% endif %}">Shipped</div>
+      <div class="rounded-md p-3 text-center text-sm font-bold {% if order.status == 'delivered' %}bg-emerald-700 text-white{% else %}bg-stone-100 text-stone-600{% endif %}">Delivered</div>
+    </div>
+  </section>
+</div>
+{% endblock %}

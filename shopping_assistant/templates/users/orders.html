@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="dashboard-layout" data-reveal>
+  <aside class="dashboard-sidebar">
+    <a href="{% url 'users:profile' %}"><i class="fas fa-user"></i> Profile</a>
+    <a href="{% url 'users:orders' %}" class="active"><i class="fas fa-box"></i> Orders</a>
+    <a href="{% url 'cart:cart' %}"><i class="fas fa-bag-shopping"></i> Cart</a>
+    <a href="{% url 'products:product_list' %}"><i class="fas fa-store"></i> Shop</a>
+  </aside>
+
+  <div>
+    <div class="section-head">
+      <div>
+        <span class="page-kicker">Purchase history</span>
+        <h1 class="section-title">Your orders</h1>
+      </div>
+    </div>
+    {% if orders %}
+      <div class="table-shell">
+        <table>
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>Status</th>
+              <th>Total</th>
+              <th>Payment</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for order in orders %}
+              <tr>
+                <td><strong>#{{ order.id }}</strong></td>
+                <td><span class="badge badge-neutral">{{ order.get_status_display }}</span></td>
+                <td><strong>Rs. {{ order.total }}</strong></td>
+                <td>{{ order.get_payment_method_display }}</td>
+                <td>{{ order.created_at|date:"Y-m-d H:i" }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <div class="empty-state">
+        <h2>No orders yet</h2>
+        <p>Your order history will appear here after checkout.</p>
+        <a href="{% url 'products:product_list' %}" class="btn-primary">Shop products</a>
+      </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}
